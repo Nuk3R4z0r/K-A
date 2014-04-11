@@ -75,7 +75,7 @@ void runTask(int task)
   {
     blinkzTwo();
   }
-}https://github.com/Gallopsalot/ARD.git
+}
 
 void loop()
 {
