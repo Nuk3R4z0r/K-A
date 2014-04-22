@@ -18,7 +18,7 @@ const int IS_ALIVE = 4;
 const int LED1 = 5;
 const int LED2 = 6;
 
-volatile static int taskList[MAX_TASKS][4]; // taskID, interval, lastRun, cycles, isAlive
+volatile static long taskList[MAX_TASKS][5]; // taskID, interval, lastRun, cycles, isAlive
 //int runningTask = 0;
 EthernetClient client;
 
@@ -38,8 +38,8 @@ void setup()
     taskList[i][0] = 0;
   }
   createTask(1, 0, 0);
-  createTask(2, 500, 0);
-  createTask(3, 10000, 0);
+  //createTask(2, 500, 0);
+  //createTask(3, 10000, 0);
   Serial.println("setup complete");
 }
 
@@ -58,7 +58,6 @@ void createTask(int taskID, int interval, int cycles)
       break;
     }
   }
-  
 }
 
 void runTask(int task)
@@ -83,24 +82,22 @@ void loop()
   {
     if(taskList[i][TASK_ID] != 0)
     {
-      //if(taskList[i][IS_ALIVE] == 1)
-      //{
+      if(taskList[i][IS_ALIVE] == 1)
+      {
         if(millis() > taskList[i][LASTRUN] + taskList[i][INTERVAL])
         {
           Serial.println("running task " + taskList[i][TASK_ID]);
-          //runningTask = i;
           runTask(taskList[i][TASK_ID]);
           taskList[i][LASTRUN] = millis();
         }
-      //}
-      //else
-      //{
-        //taskList[i][TASK_ID] = 0;
-        //Serial.println("task deleted " + i);
-      //}
+      }
+      else
+      {
+        taskList[i][TASK_ID] = 0;
+        Serial.println("task deleted " + i);
+      }
     }
   }
-  delay(1);
 }
 
 void tcpConnection()
