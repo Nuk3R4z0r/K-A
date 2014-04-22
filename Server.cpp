@@ -1,7 +1,6 @@
 #include <SPI.h>
 #include <Ethernet.h>
 
-
 String stringbuilder = "";
 int lastBlink1 = 0;
 int lastBlink2 = 0;
@@ -86,9 +85,15 @@ void loop()
       {
         if(millis() > taskList[i][LASTRUN] + taskList[i][INTERVAL])
         {
+          if(taskList[i][CYCLES] == 1)
+          {
+            taskList[i][IS_ALIVE] = 0;
+          }
+
           Serial.println("running task " + taskList[i][TASK_ID]);
           runTask(taskList[i][TASK_ID]);
           taskList[i][LASTRUN] = millis();
+          taskList[i][CYCLES] -= 1;
         }
       }
       else
@@ -144,7 +149,7 @@ void tcpConnection()
   }
   else
   {
-    Serial.println("awaiting connection");
+    //Serial.println("awaiting connection");
     client = server.available();
   }
 
@@ -152,38 +157,18 @@ void tcpConnection()
 
 void blinkzOne()
 {
-  static boolean run = false;
+  static boolean run = true;
+
+  digitalWrite(LED1, run);
   
-  if(!run)
-  {
-    digitalWrite(LED1, HIGH);
-  }
-  else
-  {
-    if(millis() > lastBlink1 + FREQ)
-    {
-      digitalWrite(LED1, LOW);
-      lastBlink1 = millis();
-      run ^= run;
-    }
-  }
+  run = !run;
 }
 
 void blinkzTwo()
 {
-  static boolean run = false;
+  static boolean run = true;
+
+  digitalWrite(LED2, run);
   
-  if(!run)
-  {
-    digitalWrite(LED2, HIGH);
-  }
-  else
-  {
-    if(millis() > lastBlink2 + FREQ)
-    {
-      digitalWrite(LED2, LOW);
-      lastBlink2 = millis();
-      run ^= run;
-    }
-  }
+  run = !run;
 }
